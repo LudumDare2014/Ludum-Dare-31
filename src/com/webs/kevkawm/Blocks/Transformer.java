@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.webs.kevkawm.Main.Main;
 
+import net.bobmandude9889.World.Entity;
 import net.bobmandude9889.World.Location;
 import net.bobmandude9889.World.OrthogonalLayer;
 import net.bobmandude9889.World.OrthogonalMap;
@@ -22,37 +23,46 @@ public class Transformer {
 		List<Location> startMove = new ArrayList<Location>();
 		List<Location> endMove = new ArrayList<Location>();
 		for (int i = 0; i < startList.size(); i++) {
-			int random = ((int) Math.random() * startList.size());
 			Location startLoc = startList.get(i);
-			Location endLoc = endList.get(random);
+			Location endLoc = endList.get(0);
 			moveT.add(start.layers[0].getTile((int) startLoc.x, (int) startLoc.y));
 			startMove.add(startLoc);
 			endMove.add(endLoc);
-			endList.remove(random);
+			endList.remove(0);
 		}
 
 		world.map = Main.clear;
 
-		final List<BlockEntity> blocks = new ArrayList<BlockEntity>();
+		final List<Entity> blocks = new ArrayList<Entity>();
+		final List<Integer> starts = new ArrayList<Integer>();
 		for (int t = 0; t < moveT.size(); t++) {
 			Tile tile = moveT.get(t);
 			final BlockEntity block = new BlockEntity(tile.getImage(), startMove.get(t), endMove.get(t));
 			world.addEntity(block);
 			blocks.add(block);
+			starts.add(VelocityHandler.updates);
 			VelocityHandler.add(block);
 		}
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				for (BlockEntity block : blocks) {
-					world.entityList.remove(block);
-					VelocityHandler.remove(block);
-					world.map = end;
+				while (true) {
+					List<BlockEntity> remove = new ArrayList<BlockEntity>();
+					for (int i = 0; i < blocks.size(); i++) {
+						BlockEntity block = (BlockEntity) blocks.get(i);
+						if (VelocityHandler.updates - 100 >= starts.get(i)) {
+							world.entityList.remove(block);
+							VelocityHandler.remove(block);
+							remove.add(block);
+						}
+					}
+					for(int i = 0; i < remove.size(); i++){
+						starts.remove(blocks.indexOf(remove.get(i)));
+						blocks.remove(remove.get(i));
+					}
+					if(blocks.size() == 0){
+						world.map = end;
+					}
 				}
 			}
 		}).start();

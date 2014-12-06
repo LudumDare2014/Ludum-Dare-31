@@ -31,8 +31,9 @@ public class BlockEntity implements Entity{
 		} 
 		
 		double distance = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.x - start.y, 2));
-		double speed = distance / 50;
+		double speed = distance / 100;
 		this.velocity = new Velocity((Math.sin(rotation) * speed), (Math.cos(rotation) * speed));
+		this.velocity.y = - this.velocity.y;
 	}
 	
 	@Override
@@ -52,7 +53,6 @@ public class BlockEntity implements Entity{
 
 	@Override
 	public void setLocation(Location location) {
-		System.out.println("update");
 		this.location = location;
 	}
 
