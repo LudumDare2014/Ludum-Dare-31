@@ -30,7 +30,7 @@ public class BlockEntity implements Entity{
 			rotation = Math.toRadians(360) + rotation;
 		} 
 		
-		double distance = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.x - start.y, 2));
+		double distance = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
 		double speed = distance / 100;
 		this.velocity = new Velocity((Math.sin(rotation) * speed), (Math.cos(rotation) * speed));
 		this.velocity.y = - this.velocity.y;
